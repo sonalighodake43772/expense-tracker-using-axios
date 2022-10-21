@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Add a User</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    
+
+    <section class="container">
+      <form id="my-form">
+       
+        <div class="msg"></div>
+        <div>
+          <label for="amount">Amount:</label>
+          <input type="text" id="amount">
+        </div>
+        <div>
+          <label for="des">Description:</label>
+          <input type="text" id="des">
+        </div>
+        <div>
+          <label >Category:
+            <select name="" id="cat">
+              <option value="oil">oil</option>
+              <option value="petrol">petrol</option>
+              <option value="disel">disel</option>
+              <option value="food">food</option>
+              <option value="movies">movies</option>
+             </select>
+          </label>
+        </div>
+
+        <input class="btn" type="submit" value="ADD EXPENSE">
+      </form>
+       <ul id="users"></ul>
+
+      
+      </ul>   
+    </section>
+    
+
+    <script src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js"></script>
+  </body>
+  
+</html>
