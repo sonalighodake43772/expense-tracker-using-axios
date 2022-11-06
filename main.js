@@ -1,104 +1,103 @@
-// form validation
-const myForm = document.querySelector('#my-form');
-const amount= document.querySelector('#amount');
-const description = document.querySelector('#des');
-const category = document.querySelector('#cat');
+const form=document.getElementById('my-form');
+const amount=document.getElementById('amount');
+const description=document.getElementById('des');
 
-myForm.addEventListener('submit', onSubmit);
+const category=document.getElementById('cat');
 
+form.addEventListener('submit',onSubmit);
 
-
-function onSubmit(e) {
-  e.preventDefault();
-
-  let expense =
-  {
-      amount: amount.value,
-      description: description.value,
-       category:category.value
- }
-
-// localStorage.setItem(expense.category, JSON.stringify(expense));
-axios
-.post('https://crudcrud.com/api/691f63d6176447c2a43b20f0f40dd7c4/trackexpense',expense)
-.then(res=>console.log(res));
-ShowExpense(expense);
-  }
-
-
-  window.addEventListener('DOMContentLoaded',()=>
-  {
-    
-    axios
-.get('https://crudcrud.com/api/691f63d6176447c2a43b20f0f40dd7c4/trackexpense')
-.then((res)=>{
-console.log(res)
-for(let i=0;i<res.data.length;i++)
+function onSubmit(e)
 {
-  ShowExpense(res.data[i]);
+    e.preventDefault();
+    let expenses=
+    {
+        amount:amount.value,
+        description:description.value,
+        category:category.value,
+    }
+    axios.post("https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker",expenses)
+    .then((res)=>
+        console.log(res)
+        )
+    ShowExpense(expenses);
+
+
+
 }
+
+
+
+window.addEventListener('DOMContentLoaded',()=>
+{
+    axios.get("https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker")
+    .then((res)=>{
+    console.log(res);
+    for(var i=0;i<res.data.length;i++)
+    {
+        ShowExpense(res.data[i]);
+    }
 })
-.catch((err)=>
-console.log(err))
-  
 })
 
+function ShowExpense(expense)
+{
+    const parentnde=document.getElementById('users');
+    const childnode=`<li id="${expense._id}">${expense.category}:${expense.amount}:${expense.description}
+    <button onclick=EditExpense('${expense.amount}','${expense.description}','${expense.category}','${expense._id}')>EDIT</button>
+     <button onclick=DeleteExpense('${expense._id}')>DELETE</button>
+    </li>`
+    parentnde.innerHTML=parentnde.innerHTML + childnode;
+    amount.value='';
+    description.value='';
+    category.value='';
 
 
-  function ShowExpense(exp) {
 
-  //  if(localStorage.getItem(exp.category)!==null)
-  //  {
-  //    deleteexpensefromscreen(exp.category);
-  // }
 
-  
-   const parentnode=document.getElementById('users');
-   const childnode= `<li id=${exp._id}> ${exp.amount} - ${exp.description} - ${exp.category}
-    <button onclick=DeleteExpense('${exp._id}')> Delete expense </button>
-    <button onclick=EditExpense('${exp.amount}','${exp.description}','${exp._id}')> Edit Expense </button>
-    </li>`;
+}
+function EditExpense(amount,description,category,expid)
 
-   parentnode.innerHTML=parentnode.innerHTML + childnode;
-     amount.value = '';
-    description.value = '';
+{
+  axios.get
+    (`https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker/${expid}`)
+    
+    .then((res)=>
+    {
+         console.log(res)
+        
+          
+    document.getElementById('amount').value=amount;
+    document.getElementById('des').value=description;
 
-  }
+     document.getElementById('cat').value=category;
+    DeleteExpense(expid);
+    })
+    
 
-  // delete expense
+   
+    
+}
 function DeleteExpense(expenseid)
 {
-  // localStorage.removeItem(expenseid);
-  axios
-.delete(`https://crudcrud.com/api/691f63d6176447c2a43b20f0f40dd7c4/trackexpense/${expenseid}`)
-.then((res)=>
-{console.log(res)
-deleteexpensefromscreen(expenseid);
-})
+   axios
+   .delete(`https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker/${expenseid}`)
+   .then((res)=>{
+    console.log(res);
+   
+    RemoveExpenseFromScreen(expenseid);
+
+   })
+   
+
+
 
 }
-
-// editexpense
-function EditExpense(amount,description,expID)
+function RemoveExpenseFromScreen(expenseid)
 {
-
-document.getElementById("amount").value=amount;
- document.getElementById("des").value=description ;
-//  document.getElementById("cat").value=category;
- DeleteExpense(expID);
- console.log(expID);
-    
-  
-  }
-  
-
-  // remove expense from screen
-function deleteexpensefromscreen(expenseid){
-  const parentNode = document.getElementById('users');
-  const childNode = document.getElementById(expenseid);
-if(childNode)
-{
- parentNode.removeChild(childNode);
+    const parentnde=document.getElementById('users');
+    const childnode=document.getElementById(expenseid);
+    if(childnode)
+    {
+        parentnde.removeChild(childnode);
+    }
 }
-}
-
