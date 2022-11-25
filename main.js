@@ -1,103 +1,73 @@
-const form=document.getElementById('my-form');
-const amount=document.getElementById('amount');
-const description=document.getElementById('des');
+var form = document.getElementById("my-form")
+form.addEventListener("submit",addExpense)
 
-const category=document.getElementById('cat');
-
-form.addEventListener('submit',onSubmit);
-
-function onSubmit(e)
-{
-    e.preventDefault();
-    let expenses=
-    {
-        amount:amount.value,
-        description:description.value,
-        category:category.value,
+function addExpense(e){
+    e.preventDefault()
+    var amount = document.getElementById("amount").value
+    var description = document.getElementById("des").value
+    var category = document.getElementById("cat").value
+    const expenseDetails = {
+        amount,
+        description,
+        category
     }
-    axios.post("https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker",expenses)
-    .then((res)=>
-        console.log(res)
-        )
-    ShowExpense(expenses);
 
-
-
+    axios.post("https://crudcrud.com/api/3faa0ec0884f48cb9b1895e423efcdff/expense",expenseDetails)
+        .then((Response)=>{
+            console.log(Response)
+            showNewExpenseOnScreen(Response.data)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
 }
 
+window.addEventListener("DOMContentLoaded",()=>{
+    axios.get("https://crudcrud.com/api/3faa0ec0884f48cb9b1895e423efcdff/expense")
+        .then((Response)=>{
+            for(let i=0 ; i<Response.data.length ; i++){
+                console.log(Response)
+                showNewExpenseOnScreen(Response.data[i])
 
-
-window.addEventListener('DOMContentLoaded',()=>
-{
-    axios.get("https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker")
-    .then((res)=>{
-    console.log(res);
-    for(var i=0;i<res.data.length;i++)
-    {
-        ShowExpense(res.data[i]);
-    }
-})
+            }
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
 })
 
-function ShowExpense(expense)
-{
-    const parentnde=document.getElementById('users');
-    const childnode=`<li id="${expense._id}">${expense.category}:${expense.amount}:${expense.description}
-    <button onclick=EditExpense('${expense.amount}','${expense.description}','${expense.category}','${expense._id}')>EDIT</button>
-     <button onclick=DeleteExpense('${expense._id}')>DELETE</button>
-    </li>`
-    parentnde.innerHTML=parentnde.innerHTML + childnode;
-    amount.value='';
-    description.value='';
-    category.value='';
-
-
-
-
-}
-function EditExpense(amount,description,category,expid)
-
-{
-  axios.get
-    (`https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker/${expid}`)
-    
-    .then((res)=>
-    {
-         console.log(res)
-        
-          
-    document.getElementById('amount').value=amount;
-    document.getElementById('des').value=description;
-
-     document.getElementById('cat').value=category;
-    DeleteExpense(expid);
-    })
-    
-
+function showNewExpenseOnScreen(user){
+    var parentNode = document.getElementById("users");
+    var childHTML = `<li id = ${user._id}> ${user.amount} - ${user.description} -${user.category} 
+                    <button onclick = deleteExpense('${user._id}')>Delete Expense</button>
+                    <button onclick = editExpense('${user._id}','${user.amount}','${user.description}','${user.category}')>Edit Expense</button>
+                    </li>`
+    parentNode.innerHTML = parentNode.innerHTML + childHTML  
    
-    
 }
-function DeleteExpense(expenseid)
-{
-   axios
-   .delete(`https://crudcrud.com/api/16c7b78307f947e49bb55db3a5994ed5/expensetracker/${expenseid}`)
-   .then((res)=>{
-    console.log(res);
-   
-    RemoveExpenseFromScreen(expenseid);
 
-   })
-   
-
-
-
+function deleteExpense(id){
+    axios.delete(`https://crudcrud.com/api/3faa0ec0884f48cb9b1895e423efcdff/expense/${id}`)
+        .then((Response)=>{
+            removeExpense(id)
+            console.log(Response)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
 }
-function RemoveExpenseFromScreen(expenseid)
-{
-    const parentnde=document.getElementById('users');
-    const childnode=document.getElementById(expenseid);
-    if(childnode)
-    {
-        parentnde.removeChild(childnode);
+
+function removeExpense(id){
+    var parentNode = document.getElementById("users")
+    var child = document.getElementById(id)
+    if(child){
+        parentNode.removeChild(child)
     }
+}
+
+function editExpense(id,amount,description,category){
+    document.getElementById("amount").value = amount
+    document.getElementById("des").value = description
+    document.getElementById("cat").value = category;
+    removeExpense(id)
 }
